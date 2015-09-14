@@ -1,0 +1,8 @@
+Package: morton
+Version: 0.1-1
+Title: Functions for Handling Morton Code
+Author: Simon Urbanek <Simon.Urbanek@r-project.org>
+Maintainer: Simon Urbanek <Simon.Urbanek@r-project.org>
+Description: Provides conversion to/from Morton code (2D Z-order curve) and associated utilities.
+License: GPL-2 | GPL-3 | file LICENSE
+URL: http://www.rforge.net/morton

@@ -1,0 +1,2 @@
+useDynLib(morton, to_morton, from_morton, encode_, decode_)
+export(toMorton, fromMorton, iencode64, idecode64)
