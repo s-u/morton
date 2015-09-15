@@ -6,9 +6,10 @@
 }
 \description{
   \code{iencode64} encodes up to 64-bit intgers numbers into a concise
-  ASCII string representation. It uses the same table as base64
-  encoding, but encodes only as many characters as are necessary to
-  include the most significant bit set to 1.
+  ASCII string representation. It uses the same characters as base64
+  encoding, but in strictly lexicographically ascending order and
+  encodes only as many characters as are necessary to include the most
+  significant bit set to 1.
 }
 \usage{
 iencode64(x, min.length = 1L)
@@ -18,18 +19,25 @@ idecode64(x)
   \item{x}{\code{iencode64}: numeric vector of values to encode. Reals
   are truncated to 64-bit unsigned integer values.
 
-  \code{idecode64}: character vector fo encoded values.}
+  \code{idecode64}: character vector of encoded values.}
   \item{min.length}{integer, minimal length of the encoded strings.}
 }
 \details{
   Although the encoding is closely related to base64 encoding, it is
   not the same, because it encodes only as many 6-bit groups as are
-  needed. They are identical for 24-bit and 48-bit encoded integers
-  (i.e., 4 and 8 character iencoding) if the integer was stored as
-  big-endian.
+  needed and the order of the characters is different. However, due to
+  the design that characters in the encoding table are in
+  lexicographically ascending order, the lexicographical order of the
+  strings (as long as they are all left-padded to the same length) is
+  equal to the order of the encoded values.
 
   Numeric values are truncated to 64-bit unsigned integers before
   encoding.
+
+  Decoding of a value stops if a character outside of the b64 alphabet
+  (alphanumeric, plus and slash) is encountered. If the value
+  overflows (more than 64 bits are encoded) the behavior is undefined
+  (currently the code discards MSB that are beyond 64-bit).
 }
 \value{
 \code{iencode64}: character vector of encoded values
@@ -47,12 +55,8 @@ Simon Urbanek
 
   idecode64("ABC")
 
-  if (isTRUE(require(base64enc, quietly=TRUE))) {
-    print(a <- iencode64(0x123456))
-    print(base64decode(a))
-    ## it has to be 4 or 8 character representation
-    print(b <- iencode64(0x1234, 4))
-    print(base64decode(b))
-  }
+  x = floor(runif(100, 0, 2^32))
+  iencode64(x[1:10])
+  stopifnot(x == idecode64(iencode64(x)))
 }
 \keyword{manip}

@@ -2,7 +2,8 @@
 
 #include <Rinternals.h>
 
-static const char *b64tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+/* same set as base64 encoding, but in increasing lexicographical order to retain ordering properties */
+static const char *b64tab = "+/0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
 static char buf[64];
 
@@ -14,7 +15,7 @@ static const char *encode_num(uint64_t n, int min_len) {
 	n >>= 6;
 	min_len--;
     }
-    while ((min_len--) > 0) *(c--) = 'A';
+    while ((min_len--) > 0) *(c--) = b64tab[0];
     return c + 1;
 }
 
@@ -23,19 +24,18 @@ static uint64_t decode_num(const char *c) {
     while (*c) {
         if (*c >= 'A' && *c <= 'Z') {
 	    a <<= 6; 
-	    a |= (unsigned char) (*c - 'A');
+	    a |= (unsigned char) (*c - 'A' + 12);
 	} else if (*c >= 'a' && *c <= 'z') {
 	    a <<= 6; 
-	    a |= (unsigned char) (*c - 'a' + 26);
+	    a |= (unsigned char) (*c - 'a' + 38);
 	} else if (*c >= '0' && *c <= '9') {
 	    a <<= 6; 
-	    a |= (unsigned char) (*c - '0' + 52);
+	    a |= (unsigned char) (*c - '0' + 2);
 	} else if (*c == '+') {
 	    a <<= 6; 
-	    a |= 62;
 	} else if (*c == '/') {
 	    a <<= 6; 
-	    a |= 63;
+	    a |= 1;
 	} else break;
 	c++;
     }
